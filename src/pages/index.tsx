@@ -40,7 +40,7 @@ const Home = () => {
     console.log(x, y);
     let n = 0;
     let m = 0;
-
+    if (board[y][x] !== 0) return;
     const newboard = structuredClone(board);
     while (n < 6) {
       n = n + 1;
@@ -51,9 +51,14 @@ const Home = () => {
           board[y + 1][x] !== 0
         ) {
           newboard[y][x] = turncolor;
-          while (n > m) newboard[y + n][x] = turncolor;
-          setturncolor(2 / turncolor);
-          m = m + 1;
+          while (n + 1 > m) {
+            newboard[y + m][x] = turncolor;
+            setturncolor(2 / turncolor);
+            if (board[y + m + 1][x] === turncolor) {
+              break;
+            }
+            m = m + 1;
+          }
         }
       }
     }
