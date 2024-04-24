@@ -51,15 +51,15 @@ const Home = () => {
           board[y + n * direction][x + n * direction] === 2 / turncolor
         ) {
           if (
-            board[y + 1 + n] !== undefined &&
-            board[y + 1 + n][x] === turncolor &&
-            board[y + 1][x] !== 0
+            board[y + 1 + n * direction][x + 1 + n * direction] !== undefined &&
+            board[y + 1 + n * direction][x + 1 + n * direction] === turncolor &&
+            board[y + 1 + n * direction][x + n * direction] !== 0
           ) {
             newboard[y][x] = turncolor;
             while (n + 1 > m) {
-              newboard[y + m][x] = turncolor;
+              newboard[y + m * direction][x + m * direction] = turncolor;
               setturncolor(2 / turncolor);
-              if (board[y + m + 1][x] === turncolor) {
+              if (board[y + m * direction + 1][x + n * direction + 1] === turncolor) {
                 break;
               }
               m = m + 1;
