@@ -44,28 +44,32 @@ const Home = () => {
     for (direction of directions[n]) {
       if (board[y][x] !== 0) return;
       const newboard = structuredClone(board);
-      while (n < 6) {
-        n = n + 1;
+      while (n < 8) {
+        console.log(directions[n][0]);
+        console.log(directions[n][1]);
         if (
-          board[y + n * direction][x + n * direction] !== undefined &&
-          board[y + n * direction][x + n * direction] === 2 / turncolor
+          board[y + directions[n][0] + n * directions[n][0]][
+            x + directions[n][1] + n * directions[n][1]
+          ] !== undefined &&
+          board[y + n * directions[n][0]][x + n * directions[n][1]] === 2 / turncolor
         ) {
           if (
-            board[y + 1 + n * direction][x + 1 + n * direction] !== undefined &&
-            board[y + 1 + n * direction][x + 1 + n * direction] === turncolor &&
-            board[y + 1 + n * direction][x + n * direction] !== 0
+            board[y + 1 + n * directions[n][0]][x + 1 + n * directions[n][1]] !== undefined &&
+            board[y + 1 + n * directions[n][0]][x + 1 + n * directions[n][1]] === turncolor &&
+            board[y + 1 + n * directions[n][0]][x + n * directions[n][1]] !== 0
           ) {
             newboard[y][x] = turncolor;
             while (n + 1 > m) {
-              newboard[y + m * direction][x + m * direction] = turncolor;
+              newboard[y + m * directions[n][0]][x + m * directions[n][1]] = turncolor;
               setturncolor(2 / turncolor);
-              if (board[y + m * direction + 1][x + n * direction + 1] === turncolor) {
+              if (board[y + m * directions[n][0] + 1][x + m * directions[n][1] + 1] === turncolor) {
                 break;
               }
               m = m + 1;
             }
           }
         }
+        n = n + 1;
       }
       setboard(newboard);
     }
