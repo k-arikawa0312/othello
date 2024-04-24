@@ -10,7 +10,7 @@ const directions = [
   [-1, -1],
   [-1, 0],
   [-1, 1],
-];
+] as const;
 
 // const flipStones = (board: number[][], turnColor: number, x: number, y: number) => {};
 
@@ -39,30 +39,36 @@ const Home = () => {
   const clickHandler = (x: number, y: number) => {
     console.log(x, y);
     let n = 0;
-    let m = 0;
-    if (board[y][x] !== 0) return;
-    const newboard = structuredClone(board);
-    while (n < 6) {
-      n = n + 1;
-      if (board[y + n] !== undefined && board[y + n][x] === 2 / turncolor) {
+    let m = 0; //変数増やさ（ざるをえ）ない
+    let direction = 0;
+    for (direction of directions[n]) {
+      if (board[y][x] !== 0) return;
+      const newboard = structuredClone(board);
+      while (n < 6) {
+        n = n + 1;
         if (
-          board[y + 1 + n] !== undefined &&
-          board[y + 1 + n][x] === turncolor &&
-          board[y + 1][x] !== 0
+          board[y + n * direction][x + n * direction] !== undefined &&
+          board[y + n * direction][x + n * direction] === 2 / turncolor
         ) {
-          newboard[y][x] = turncolor;
-          while (n + 1 > m) {
-            newboard[y + m][x] = turncolor;
-            setturncolor(2 / turncolor);
-            if (board[y + m + 1][x] === turncolor) {
-              break;
+          if (
+            board[y + 1 + n] !== undefined &&
+            board[y + 1 + n][x] === turncolor &&
+            board[y + 1][x] !== 0
+          ) {
+            newboard[y][x] = turncolor;
+            while (n + 1 > m) {
+              newboard[y + m][x] = turncolor;
+              setturncolor(2 / turncolor);
+              if (board[y + m + 1][x] === turncolor) {
+                break;
+              }
+              m = m + 1;
             }
-            m = m + 1;
           }
         }
       }
+      setboard(newboard);
     }
-    setboard(newboard);
   };
 
   return (
