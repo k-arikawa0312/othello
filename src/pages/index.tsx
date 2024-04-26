@@ -64,6 +64,8 @@ const Home = () => {
               console.log(x + dx * n, y + dy * n);
               newboard[y + dy * n][x + dx * n] = turncolor;
             }
+            setboard(newboard);
+            setturncolor(2 / turncolor);
           }
           break;
         }
@@ -73,8 +75,6 @@ const Home = () => {
         currentPos[1] += dy;
       }
     }
-    setboard(newboard);
-    setturncolor(2 / turncolor);
   };
 
   return (
