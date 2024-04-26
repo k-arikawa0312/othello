@@ -10,7 +10,7 @@ const directions = [
   [-1, -1],
   [-1, 0],
   [-1, 1],
-] as const;
+];
 
 // const flipStones = (board: number[][], turnColor: number, x: number, y: number) => {};
 
@@ -38,39 +38,33 @@ const Home = () => {
 
   const clickHandler = (x: number, y: number) => {
     console.log(x, y);
+    if (board[y][x] !== 0) return;
+    const newboard = structuredClone(board);
     for (const direction of directions) {
+      const currentPos = [0, 0];
       const [dx, dy] = direction;
-      if (board[y][x] !== 0) return;
-      const newboard = structuredClone(board);
-      while (x >= 0 && x < 8 && y >= 0 && y < 8) {
-        console.log(direction[0]);
-        console.log(direction[1]);
-        if (
-          board[y + dx + n * directions[n][0]][
-            x + directions[n][1] + n * directions[n][1] //direction[n]と*nは別の変数
-          ] !== undefined &&
-          board[y + n * directions[n][0]][x + n * directions[n][1]] === 2 / turncolor
-        ) {
-          if (
-            board[y + 1 + n * directions[n][0]][x + 1 + n * directions[n][1]] !== undefined &&
-            board[y + 1 + n * directions[n][0]][x + 1 + n * directions[n][1]] === turncolor &&
-            board[y + 1 + n * directions[n][0]][x + n * directions[n][1]] !== 0
-          ) {
+
+      currentPos[0] = x + dx;
+      currentPos[1] = y + dy;
+      let findOpponent: boolean = false;
+      while (currentPos[0] >= 0 && currentPos[0] < 8 && currentPos[1] >= 0 && currentPos[1] < 8) {
+        const stone = board[currentPos[1]][currentPos[0]];
+
+        if (stone === 0) break;
+        if (stone === turncolor) {
+          if (findOpponent) {
             newboard[y][x] = turncolor;
-            while (n + 1 > m) {
-              newboard[y + m * directions[n][0]][x + m * directions[n][1]] = turncolor;
-              setturncolor(2 / turncolor);
-              if (board[y + m * directions[n][0] + 1][x + m * directions[n][1] + 1] === turncolor) {
-                break;
-              }
-              m = m + 1;
-            }
           }
+          break;
         }
-        n = n + 1;
+
+        findOpponent = true;
+        currentPos[0] += dx;
+        currentPos[1] += dy;
       }
-      setboard(newboard);
     }
+    setboard(newboard);
+    setturncolor(2 / turncolor);
   };
 
   return (
