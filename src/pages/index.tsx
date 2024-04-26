@@ -54,6 +54,14 @@ const Home = () => {
         if (stone === turncolor) {
           if (findOpponent) {
             newboard[y][x] = turncolor;
+            newboard[y + dy][x + dx] = turncolor;
+            for (let n = 0; n < 8; n++) {
+              console.log(n);
+              if (x + dx * n < 0 || x + dx * n >= 8 || y + dy * n < 0 || y + dy * n >= 8) break;
+              console.log(500);
+              console.log(x + dx * n, y + dy * n);
+              newboard[y + dy * n][x + dx * n] = turncolor;
+            }
           }
           break;
         }
