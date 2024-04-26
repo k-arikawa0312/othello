@@ -38,18 +38,16 @@ const Home = () => {
 
   const clickHandler = (x: number, y: number) => {
     console.log(x, y);
-    let n = 0;
-    let m = 0; //変数増やさ（ざるをえ）ない
-    let direction = 0;
-    for (direction of directions[n]) {
+    for (const direction of directions) {
+      const [dx, dy] = direction;
       if (board[y][x] !== 0) return;
       const newboard = structuredClone(board);
-      while (n < 8) {
-        console.log(directions[n][0]);
-        console.log(directions[n][1]);
+      while (x >= 0 && x < 8 && y >= 0 && y < 8) {
+        console.log(direction[0]);
+        console.log(direction[1]);
         if (
-          board[y + directions[n][0] + n * directions[n][0]][
-            x + directions[n][1] + n * directions[n][1]
+          board[y + dx + n * directions[n][0]][
+            x + directions[n][1] + n * directions[n][1] //direction[n]と*nは別の変数
           ] !== undefined &&
           board[y + n * directions[n][0]][x + n * directions[n][1]] === 2 / turncolor
         ) {
