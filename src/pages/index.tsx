@@ -39,6 +39,7 @@ const Home = () => {
 
   const clickHandler = (x: number, y: number) => {
     console.log(x, y);
+
     if (board[y][x] !== 0) return;
     const newboard = structuredClone(board);
     for (const direction of directions) {
@@ -57,10 +58,8 @@ const Home = () => {
             newboard[y][x] = turncolor;
             newboard[y + dy][x + dx] = turncolor;
             for (let n = 0; n < 8; n++) {
-              console.log(n);
               if (x + dx * n < 0 || x + dx * n >= 8 || y + dy * n < 0 || y + dy * n >= 8) break;
               if (board[y + dy * n][x + dx * n] === turncolor) break;
-              console.log(500);
               console.log(x + dx * n, y + dy * n);
               newboard[y + dy * n][x + dx * n] = turncolor;
             }
@@ -75,6 +74,7 @@ const Home = () => {
         currentPos[1] += dy;
       }
     }
+
   };
 
   return (
@@ -84,10 +84,14 @@ const Home = () => {
           row.map((color, x) => (
             <div className={styles.cell} key={`${x}-${y}`} onClick={() => clickHandler(x, y)}>
               {color !== 0 && (
-                <div
-                  className={styles.stone}
-                  style={{ background: color === 1 ? '#000' : '#fff' }}
-                />
+                <div>
+                 <div className={styles.stone} style={{ background: color === 1 ? '#000' : '#fff' }}
+                 <div   id="info">
+                    <p>現在の手番: <span id="currentPlayer">黒</span></p>
+                    <p>黒の石の数: <span id="blackCount">2</span></p>
+                    <p>白の石の数: <span id="whiteCount">2</span></p>
+                  </div>
+               </div>
               )}
             </div>
           )),
