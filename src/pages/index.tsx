@@ -73,25 +73,34 @@ const Home = () => {
         currentPos[0] += dx;
         currentPos[1] += dy;
       }
+      const currentPlayer = turncolor === 1 ? '白' : '黒';
+      const blackCount = board.flat().filter((cell) => cell === 2).length;
+      const whiteCount = board.flat().filter((cell) => cell === 1).length;
     }
-
   };
 
   return (
     <div className={styles.container}>
+      <div id="info">
+        <p>
+          現在の手番: <span id="currentPlayer">黒</span>
+        </p>
+        <p>
+          黒の石の数: <span id="blackCount">2</span>
+        </p>
+        <p>
+          白の石の数: <span id="whiteCount">2</span>
+        </p>
+      </div>
       <div className={styles.board}>
         {board.map((row, y) =>
           row.map((color, x) => (
             <div className={styles.cell} key={`${x}-${y}`} onClick={() => clickHandler(x, y)}>
               {color !== 0 && (
-                <div>
-                 <div className={styles.stone} style={{ background: color === 1 ? '#000' : '#fff' }}
-                 <div   id="info">
-                    <p>現在の手番: <span id="currentPlayer">黒</span></p>
-                    <p>黒の石の数: <span id="blackCount">2</span></p>
-                    <p>白の石の数: <span id="whiteCount">2</span></p>
-                  </div>
-               </div>
+                <div
+                  className={styles.stone}
+                  style={{ background: color === 1 ? '#000' : '#fff' }}
+                />
               )}
             </div>
           )),
