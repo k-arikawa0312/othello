@@ -76,14 +76,13 @@ const Home = () => {
     }
   };
 
-  const currentPlayer = turncolor === 1 ? '黒' : '白';
   const blackCount = board.flat().filter((cell) => cell === 2).length;
   const whiteCount = board.flat().filter((cell) => cell === 1).length;
   return (
     <div className={styles.container}>
       <div id="info">
         <p>
-          現在の手番: <span id="currentPlayer">{currentPlayer}</span>
+          現在の手番: <span id="currentPlayer">{{ 1: '黒', 2: '白' }[turncolor]}</span>
         </p>
         <p>
           黒の石の数: <span id="blackCount">{blackCount}</span>
