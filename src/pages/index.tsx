@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styles from './index.module.css';
+let canPut = 0; //0でおけない1でおける
 
 const directions = [
   [0, 1],
@@ -12,12 +13,9 @@ const directions = [
   [-1, 1],
 ];
 
-// const flipStones = (board: number[][], turnColor: number, x: number, y: number) => {};
-
 const Home = () => {
   const [turncolor, setturncolor] = useState(1);
   const [board, setboard] = useState([
-    //空白0 白1 黒2 row=行 for 調べる
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
@@ -26,20 +24,9 @@ const Home = () => {
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
-
-    //[0, 0, 0, 0, 0, 0, 0, 0],
-    //[0, 0, 0, 0, 0, 0, 0, 1],
-    //[0, 0, 0, 0, 0, 0, 2, 1],
-    //[0, 0, 0, 0, 0, 1, 2, 1],
-    //[0, 0, 0, 0, 2, 1, 2, 1],
-    //[0, 0, 0, 1, 2, 1, 2, 1],
-    //[0, 0, 2, 1, 2, 1, 2, 1],
-    //[0, 2, 1, 2, 1, 2, 1, 2],
   ]);
 
   const clickHandler = (x: number, y: number) => {
-    console.log(x, y);
-
     if (board[y][x] !== 0) return;
     const newboard = structuredClone(board);
     for (const direction of directions) {
@@ -49,6 +36,7 @@ const Home = () => {
       currentPos[0] = x + dx;
       currentPos[1] = y + dy;
       let findOpponent: boolean = false;
+      canPut = 0;
       while (currentPos[0] >= 0 && currentPos[0] < 8 && currentPos[1] >= 0 && currentPos[1] < 8) {
         const stone = board[currentPos[1]][currentPos[0]];
 
@@ -57,10 +45,16 @@ const Home = () => {
           if (findOpponent) {
             newboard[y][x] = turncolor;
             newboard[y + dy][x + dx] = turncolor;
+            canPut = 1;
             for (let n = 0; n < 8; n++) {
-              if (x + dx * n < 0 || x + dx * n >= 8 || y + dy * n < 0 || y + dy * n >= 8) break;
-              if (board[y + dy * n][x + dx * n] === turncolor) break;
-              console.log(x + dx * n, y + dy * n);
+              if (
+                x + dx * n < 0 ||
+                x + dx * n >= 8 ||
+                y + dy * n < 0 ||
+                y + dy * n >= 8 ||
+                board[y + dy * n][x + dx * n] === turncolor
+              )
+                break;
               newboard[y + dy * n][x + dx * n] = turncolor;
             }
             setboard(newboard);
@@ -76,13 +70,13 @@ const Home = () => {
     }
   };
 
-  const blackCount = board.flat().filter((cell) => cell === 2).length;
-  const whiteCount = board.flat().filter((cell) => cell === 1).length;
+  const blackCount = board.flat().filter((cell) => cell === 1).length;
+  const whiteCount = board.flat().filter((cell) => cell === 2).length;
   return (
     <div className={styles.container}>
       <div id="info">
         <p>
-          現在の手番: <span id="currentPlayer">{{ 1: '黒', 2: '白' }[turncolor]}</span>
+          <span id="currentPlayer">{{ 1: '黒', 2: '白' }[turncolor]}の番です</span>
         </p>
         <p>
           黒の石の数: <span id="blackCount">{blackCount}</span>
@@ -101,6 +95,7 @@ const Home = () => {
                   style={{ background: color === 1 ? '#000' : '#fff' }}
                 />
               )}
+              <div />
             </div>
           )),
         )}

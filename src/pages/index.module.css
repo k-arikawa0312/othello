@@ -31,3 +31,9 @@
   background-color: white;
   border-radius: 50%;
 }
+
+.area {
+  width: 32px;
+  height: 32px;
+  background-color: blue;
+}
