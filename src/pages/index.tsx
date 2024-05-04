@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styles from './index.module.css';
+let isValid = 0;
 
 const directions = [
   [0, 1],
@@ -47,14 +48,26 @@ function canPut(x: number, y: number, board: number[][], turnColor: number) {
   }
 }
 
+const suggest = (board: number[][], turnColor: number) => {
+  for (let y = 0; y < 8; y++) {
+    for (let x = 0; x < 8; x++) {
+      if (board[y][x] === 3) board[y][x] = 0;
+      if (canPut(x, y, board, 3 - turnColor)) {
+        board[y][x] = 3;
+        isValid += 1;
+      }
+    }
+  }
+};
+
 const Home = () => {
   const [turnColor, setturncolor] = useState(1);
   const [board, setboard] = useState([
     // [1, 2, 0, 0, 0, 0, 0, 0],
-    // [2, 2, 0, 0, 0, 0, 0, 0],
     // [0, 0, 0, 0, 0, 0, 0, 0],
+    // [1, 2, 0, 0, 0, 0, 0, 0],
     // [0, 0, 0, 0, 0, 0, 0, 0],
-    // [0, 0, 0, 0, 0, 0, 0, 0],
+    // [1, 2, 0, 0, 0, 0, 0, 0],
     // [0, 0, 0, 0, 0, 0, 0, 0],
     // [0, 0, 0, 0, 0, 0, 0, 0],
     // [0, 0, 0, 0, 0, 0, 0, 0],
@@ -68,10 +81,14 @@ const Home = () => {
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
   ]);
+  const blackCount = board.flat().filter((cell) => cell === 1).length;
+  const whiteCount = board.flat().filter((cell) => cell === 2).length;
+  const areaCount = board.flat().filter((cell) => cell === 3).length;
 
   const clickHandler = (x: number, y: number) => {
     if (board[y][x] === 1 || board[y][x] === 2) return;
     const newboard = structuredClone(board);
+    const finish = 0;
 
     for (const direction of directions) {
       const currentPos = [0, 0];
@@ -109,35 +126,17 @@ const Home = () => {
         currentPos[1] += dy;
       }
     }
-    if (board[y][x] !== 0) {
-      for (let i = 0; i < 8; i++) {
-        for (let j = 0; j < 8; j++) {
-          if (newboard[i][j] === 3) {
-            newboard[i][j] = 0;
-          }
-        }
-      }
-      let isValid = 0;
-      for (let ty = 0; ty < 8; ty++) {
-        for (let tx = 0; tx < 8; tx++) {
-          if (canPut(tx, ty, newboard, 3 - turnColor)) {
-            newboard[ty][tx] = 3;
-            isValid += 1;
-          }
-        }
-      }
+    if (newboard[y][x] !== 0) {
+      suggest(newboard, turnColor);
+
       if (isValid === 0) {
         setturncolor(turnColor);
-        console.log(100);
-        console.log(isValid);
-        console.log(turnColor);
+        suggest(newboard,3-turnColor)
+        if(isValid===0){}
       }
     }
     setboard(newboard);
   };
-  const blackCount = board.flat().filter((cell) => cell === 1).length;
-  const whiteCount = board.flat().filter((cell) => cell === 2).length;
-  console.log(turnColor);
   return (
     <div className={styles.container}>
       <div id="info">
