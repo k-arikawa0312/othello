@@ -2,6 +2,8 @@ import { useState } from 'react';
 import styles from './index.module.css';
 let isValid = 0;
 
+const finish = [0];
+
 const directions = [
   [0, 1],
   [0, -1],
@@ -49,6 +51,7 @@ function canPut(x: number, y: number, board: number[][], turnColor: number) {
 }
 
 const suggest = (board: number[][], turnColor: number) => {
+  isValid = 0;
   for (let y = 0; y < 8; y++) {
     for (let x = 0; x < 8; x++) {
       if (board[y][x] === 3) board[y][x] = 0;
@@ -63,33 +66,34 @@ const suggest = (board: number[][], turnColor: number) => {
 const Home = () => {
   const [turnColor, setturncolor] = useState(1);
   const [board, setboard] = useState([
-    // [1, 2, 0, 0, 0, 0, 0, 0],
-    // [0, 0, 0, 0, 0, 0, 0, 0],
-    // [1, 2, 0, 0, 0, 0, 0, 0],
-    // [0, 0, 0, 0, 0, 0, 0, 0],
-    // [1, 2, 0, 0, 0, 0, 0, 0],
-    // [0, 0, 0, 0, 0, 0, 0, 0],
-    // [0, 0, 0, 0, 0, 0, 0, 0],
-    // [0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 2, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 2, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 2, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
 
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 3, 0, 0, 0],
-    [0, 0, 0, 1, 2, 3, 0, 0],
-    [0, 0, 3, 2, 1, 0, 0, 0],
-    [0, 0, 0, 3, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
+    // [0, 0, 0, 0, 0, 0, 0, 0],
+    // [0, 0, 0, 0, 0, 0, 0, 0],
+    // [0, 0, 0, 0, 3, 0, 0, 0],
+    // [0, 0, 0, 1, 2, 3, 0, 0],
+    // [0, 0, 3, 2, 1, 0, 0, 0],
+    // [0, 0, 0, 3, 0, 0, 0, 0],
+    // [0, 0, 0, 0, 0, 0, 0, 0],
+    // [0, 0, 0, 0, 0, 0, 0, 0],
   ]);
   const blackCount = board.flat().filter((cell) => cell === 1).length;
   const whiteCount = board.flat().filter((cell) => cell === 2).length;
-  const areaCount = board.flat().filter((cell) => cell === 3).length;
 
   const clickHandler = (x: number, y: number) => {
+    if (finish[0] === 1) {
+      alert('ゲーム終了');
+    }
     if (board[y][x] === 1 || board[y][x] === 2) return;
     const newboard = structuredClone(board);
-    const finish = 0;
-
+    finish[0] = 0;
     for (const direction of directions) {
       const currentPos = [0, 0];
       const [dx, dy] = direction;
@@ -131,12 +135,17 @@ const Home = () => {
 
       if (isValid === 0) {
         setturncolor(turnColor);
-        suggest(newboard,3-turnColor)
-        if(isValid===0){}
+        suggest(newboard, 3 - turnColor);
+        setboard(newboard);
+        if (isValid === 0) {
+          finish[0]++;
+        }
       }
     }
     setboard(newboard);
+    console.log(newboard[4]);
   };
+
   return (
     <div className={styles.container}>
       <div id="info">
