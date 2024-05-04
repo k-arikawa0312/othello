@@ -12,57 +12,53 @@ const directions = [
   [-1, 1],
 ];
 function canPut(x: number, y: number, board: number[][], turnColor: number) {
-  console.log(x, y);
-  console.log(board);
-
   if (board[y][x] === 1 || board[y][x] === 2) return;
   for (const direction of directions) {
     const currentPos = [0, 0];
 
     const [dy, dx] = direction;
-    // console.log(dy, dx);
-    // console.log(direction);
+
     currentPos[1] = x + dx;
     currentPos[0] = y + dy;
     let findOpponent: boolean = false;
 
     let count = 0;
-    // currentPos[0] >= 0 && currentPos[0] < 8 && currentPos[1] >= 0 && currentPos[1] < 8
+
     while (count < 8 && board[currentPos[0]] !== undefined) {
       count++;
-      // console.log(currentPos);
-      console.log(currentPos);
+
       const stone = board[currentPos[0]][currentPos[1]];
-      console.log(stone);
-      // console.log([currentPos[1]][currentPos[0]]);
       if (stone === 2 / turnColor) {
-        console.log(10);
         findOpponent = true;
         currentPos[1] += dx;
         currentPos[0] += dy;
         continue;
       }
       if (stone === 0 || stone === 3) {
-        console.log('no');
         break;
       }
       if (stone === turnColor) {
         if (findOpponent) {
-          console.log('passed');
           return true;
         }
       }
       break;
     }
-
-    // currentPos[0] += dx;
-    // currentPos[1] += dy;
   }
 }
 
 const Home = () => {
-  const [turncolor, setturncolor] = useState(1);
+  const [turnColor, setturncolor] = useState(1);
   const [board, setboard] = useState([
+    // [1, 2, 0, 0, 0, 0, 0, 0],
+    // [2, 2, 0, 0, 0, 0, 0, 0],
+    // [0, 0, 0, 0, 0, 0, 0, 0],
+    // [0, 0, 0, 0, 0, 0, 0, 0],
+    // [0, 0, 0, 0, 0, 0, 0, 0],
+    // [0, 0, 0, 0, 0, 0, 0, 0],
+    // [0, 0, 0, 0, 0, 0, 0, 0],
+    // [0, 0, 0, 0, 0, 0, 0, 0],
+
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 3, 0, 0, 0],
@@ -89,7 +85,7 @@ const Home = () => {
         const stone = board[currentPos[1]][currentPos[0]];
 
         if (stone === 0 || stone === 3) break;
-        if (stone === turncolor) {
+        if (stone === turnColor) {
           if (findOpponent) {
             for (let n = 0; n < 8; n++) {
               if (
@@ -97,13 +93,13 @@ const Home = () => {
                 x + dx * n >= 8 ||
                 y + dy * n < 0 ||
                 y + dy * n >= 8 ||
-                board[y + dy * n][x + dx * n] === turncolor
+                board[y + dy * n][x + dx * n] === turnColor
               )
                 break;
-              newboard[y + dy * n][x + dx * n] = turncolor;
+              newboard[y + dy * n][x + dx * n] = turnColor;
             }
 
-            setturncolor(2 / turncolor);
+            setturncolor(2 / turnColor);
           }
           break;
         }
@@ -113,37 +109,46 @@ const Home = () => {
         currentPos[1] += dy;
       }
     }
-    for (let i = 0; i < 8; i++) {
-      for (let j = 0; j < 8; j++) {
-        if (newboard[i][j] === 3) {
-          newboard[i][j] = 0;
+    if (board[y][x] !== 0) {
+      for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 8; j++) {
+          if (newboard[i][j] === 3) {
+            newboard[i][j] = 0;
+          }
         }
       }
-    }
-    for (let ty = 0; ty < 8; ty++) {
-      for (let tx = 0; tx < 8; tx++) {
-        if (canPut(tx, ty, newboard, 3 - turncolor)) {
-          newboard[ty][tx] = 3;
+      let isValid = 0;
+      for (let ty = 0; ty < 8; ty++) {
+        for (let tx = 0; tx < 8; tx++) {
+          if (canPut(tx, ty, newboard, 3 - turnColor)) {
+            newboard[ty][tx] = 3;
+            isValid += 1;
+          }
         }
       }
+      if (isValid === 0) {
+        setturncolor(turnColor);
+        console.log(100);
+        console.log(isValid);
+        console.log(turnColor);
+      }
     }
-    // canPut(7, 4, newboard, 1);
-
     setboard(newboard);
   };
   const blackCount = board.flat().filter((cell) => cell === 1).length;
   const whiteCount = board.flat().filter((cell) => cell === 2).length;
+  console.log(turnColor);
   return (
     <div className={styles.container}>
       <div id="info">
         <p>
-          <span id="currentPlayer">{{ 1: '黒', 2: '白' }[turncolor]}の番です</span>
+          <span id="currentPlayer">{{ 1: '黒', 2: '白' }[turnColor]}の番です</span>
         </p>
         <p>
-          黒の石の数: <span id="blackCount">{blackCount}</span>
+          黒の数: <span id="blackCount">{blackCount}</span>
         </p>
         <p>
-          白の石の数: <span id="whiteCount">{whiteCount}</span>
+          白の数: <span id="whiteCount">{whiteCount}</span>
         </p>
       </div>
       <div className={styles.board}>
