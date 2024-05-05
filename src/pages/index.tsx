@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import styles from './index.module.css';
 let isValid = 0;
-const n = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-const memoryPos: string | number | number[][] = [];
-const preMemoryPos: number[][] = [];
 
 const finish = [0];
 
@@ -18,18 +15,15 @@ const directions = [
   [-1, 1],
 ];
 function canPut(x: number, y: number, board: number[][], turnColor: number) {
-  memoryPos.length = 0;
-  const flag = [0, 0];
-  let findOpponent: boolean = false;
   if (board[y][x] === 1 || board[y][x] === 2) return;
   for (const direction of directions) {
-    preMemoryPos.length = 0;
     const currentPos = [0, 0];
 
     const [dy, dx] = direction;
 
     currentPos[1] = x + dx;
     currentPos[0] = y + dy;
+    let findOpponent: boolean = false;
 
     let count = 0;
 
@@ -39,32 +33,21 @@ function canPut(x: number, y: number, board: number[][], turnColor: number) {
       const stone = board[currentPos[0]][currentPos[1]];
       if (stone === 2 / turnColor) {
         findOpponent = true;
-        preMemoryPos.push([currentPos[0], currentPos[1]]);
-
         currentPos[1] += dx;
         currentPos[0] += dy;
-
-        console.log(findOpponent);
+        continue;
       }
-      console.log(findOpponent);
       if (stone === 0 || stone === 3) {
         break;
       }
-      console.log(findOpponent);
-      console.log(preMemoryPos);
-      if (stone === turnColor && findOpponent) {
-        // console.log(preMemoryPos);
-        for (const pos of preMemoryPos) {
-          console.log(pos);
-          memoryPos.push(pos);
+      if (stone === turnColor) {
+        if (findOpponent) {
+          return true;
         }
-        flag[0] = 1;
       }
-
       break;
     }
   }
-  if (flag[0] === 1) return true;
 }
 
 const suggest = (board: number[][], turnColor: number) => {
@@ -84,9 +67,9 @@ const Home = () => {
   const [turnColor, setturncolor] = useState(1);
   const [board, setboard] = useState([
     [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 1, 0, 0],
-    [0, 0, 0, 0, 2, 2, 0, 0],
-    [0, 0, 0, 1, 2, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 3, 0, 0, 0],
+    [0, 0, 0, 1, 2, 3, 0, 0],
     [0, 0, 3, 2, 1, 0, 0, 0],
     [0, 0, 0, 3, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
@@ -96,27 +79,62 @@ const Home = () => {
   const whiteCount = board.flat().filter((cell) => cell === 2).length;
 
   const clickHandler = (x: number, y: number) => {
-    const newBoard = structuredClone(board);
-
-    if (canPut(x, y, newBoard, turnColor)) {
-      newBoard[y][x] = turnColor;
-      console.log(memoryPos);
-      newBoard[memoryPos[1]][memoryPos[0]] = turnColor;
-      setboard(newBoard);
-      setturncolor(2 / turnColor);
+    if (finish[0] === 1) {
+      alert('ゲーム終了');
     }
-    if (newBoard[y][x] !== 0) {
-      suggest(newBoard, turnColor);
+    if (board[y][x] === 1 || board[y][x] === 2) return;
+    const newboard = structuredClone(board);
+    finish[0] = 0;
+    for (const direction of directions) {
+      const currentPos = [0, 0];
+      const [dx, dy] = direction;
+
+      currentPos[0] = x + dx;
+      currentPos[1] = y + dy;
+      let findOpponent: boolean = false;
+
+      while (currentPos[0] >= 0 && currentPos[0] < 8 && currentPos[1] >= 0 && currentPos[1] < 8) {
+        const stone = board[currentPos[1]][currentPos[0]];
+
+        if (stone === 0 || stone === 3) break;
+        if (stone === turnColor) {
+          if (findOpponent) {
+            for (let n = 0; n < 8; n++) {
+              if (
+                x + dx * n < 0 ||
+                x + dx * n >= 8 ||
+                y + dy * n < 0 ||
+                y + dy * n >= 8 ||
+                board[y + dy * n][x + dx * n] === turnColor
+              )
+                break;
+              newboard[y + dy * n][x + dx * n] = turnColor;
+            }
+
+            setturncolor(2 / turnColor);
+          }
+          break;
+        }
+
+        findOpponent = true;
+        currentPos[0] += dx;
+        currentPos[1] += dy;
+      }
+    }
+    if (newboard[y][x] !== 0) {
+      suggest(newboard, turnColor);
 
       if (isValid === 0) {
         setturncolor(turnColor);
-        suggest(newBoard, 3 - turnColor);
-        setboard(newBoard);
+        suggest(newboard, 3 - turnColor);
+        setboard(newboard);
         if (isValid === 0) {
           finish[0]++;
         }
       }
     }
+    setboard(newboard);
+    console.log(newboard[4]);
   };
 
   return (
